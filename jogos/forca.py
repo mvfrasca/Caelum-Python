@@ -1,7 +1,8 @@
 import random
 
 # Inicialização
-palavra_secreta = "banana"
+palavras_secretas = ["banana", "acerola", "cupuaçu", "carambola", "uva", "melancia", "maça", "abacaxi", "coco", "tomate", "laranja"]
+palavra_secreta = palavras_secretas[random.randint(0, len(palavras_secretas)-1)]
 qtd_tentativas = 7
 qtd_erros = 0
 ganhou = False
@@ -16,6 +17,9 @@ print("************************************************************\n")
 
 # Loop do Jogo
 while (not ganhou and not enforcou):
+    # Mostra a palavra descoberta até o momento
+    print("\nPalavra secreta: {}".format(palavra_descoberta))
+    print("\n")
     # Recupera o chute do usuário
     chute = input("Chute uma letra: ")
     # Verifica existência da letra na palavra
@@ -35,17 +39,14 @@ while (not ganhou and not enforcou):
         print("Xiiiii a letra {} não existe na palavra secreta!".format(letra))
         print("Você errou {} vezes de {} possíveis!".format(qtd_erros, qtd_tentativas))
 
-    # Mostra a palavra descoberta até o momento
-    print("\n {}".format(palavra_descoberta))
-    print("\n")
     # Verifica se qtd de erros possíveis foi ultrapassada
     enforcou = qtd_erros == qtd_tentativas
     # Verifica se a palavra secreta foi descoberta
     ganhou =  '_' not in palavra_descoberta
 
 if ganhou:
-    print("              \o/")
     print("\n")
+    print("              \o/")
     print("\nParabéns, você acertou a palavra secreta!\n")
 else:
     print("\nVocê se enforcou!\n")
