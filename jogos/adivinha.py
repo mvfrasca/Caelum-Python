@@ -56,5 +56,5 @@ for rodada in range(1, num_tentativas + 1):
 if acertou:
     print("\nParabéns! Você acertou em {} tentativas!\n".format(rodada))
 else:
-    print("\nGAME OVER!\n")
+    print("\nGAME OVER!\n")]
     
