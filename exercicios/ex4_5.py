@@ -101,7 +101,7 @@ for chave, valor in dicionario.items():
 # usuário se ele deseja adicionar uma nova pessoa. Após adicionar dados de algumas
 # pessoas, imprimir todos os dados de cada pessoa de forma organizada.
 ##################################################################################
-print('5) A partir no exercício anterior adicione a pessoa em uma lista. Pergunte ao usuário se ele deseja adicionar uma nova pessoa. Após adicionar dados de algumas pessoas, imprimir todos os dados de cada pessoa de forma organizada.')
+print('\n5) A partir no exercício anterior adicione a pessoa em uma lista. Pergunte ao usuário se ele deseja adicionar uma nova pessoa. Após adicionar dados de algumas pessoas, imprimir todos os dados de cada pessoa de forma organizada.')
 
 lista_pessoas = []
 resp_usuario = ""
@@ -118,10 +118,14 @@ while resp_usuario in ['s','sim','']:
         'idade': idade, 
         'cidade': cidade
     }
+    lista_pessoas.append(pessoa)
 
     while resp_usuario.lower() not in ['s','n','sim','não']:
-        resp_usuario = input('Deseja incluir uma nova pessoa na lista (S ou N)')
-    
+        resp_usuario = input('\nDeseja incluir uma nova pessoa na lista (S ou N)')
+
+# Ordena a lista
+lista_pessoas.sort(key=lambda p: p['nome'])
+# Mostra as pessoas da lista
 for pessoa in lista_pessoas:
     print(f'\nDados do usuário:')
     for chave, valor in pessoa.items():
