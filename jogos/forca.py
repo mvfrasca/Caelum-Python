@@ -9,7 +9,7 @@ for linha in arquivo_palavras:
     palavras_secretas.append(fruta)
 
 def jogar():
-    palavra_secreta = palavras_secretas[random.randint(0, len(palavras_secretas)-1)]
+    palavra_secreta = palavras_secretas[random.randrange(0, len(palavras_secretas))]
     qtd_tentativas = 6
     qtd_erros = 0
     ganhou = False
