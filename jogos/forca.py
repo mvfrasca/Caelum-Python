@@ -1,7 +1,12 @@
 import random
 
 # Inicialização
-palavras_secretas = ["banana", "acerola", "cupuaçu", "carambola", "uva", "melancia", "maça", "abacaxi", "coco", "tomate", "laranja"]
+# palavras_secretas = ["banana", "acerola", "cupuaçu", "carambola", "uva", "melancia", "maça", "abacaxi", "coco", "tomate", "laranja"]
+palavras_secretas = []
+arquivo_palavras = open('palavras_forca.txt', 'r')
+for linha in arquivo_palavras:
+    fruta = linha.strip()
+    palavras_secretas.append(fruta)
 
 def jogar():
     palavra_secreta = palavras_secretas[random.randint(0, len(palavras_secretas)-1)]
