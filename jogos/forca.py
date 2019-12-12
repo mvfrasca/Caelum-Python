@@ -14,9 +14,9 @@ def jogar():
     qtd_erros = 0
     ganhou = False
     enforcou = False
-    palavra_descoberta = []
-    while len(palavra_descoberta) < len(palavra_secreta):
-        palavra_descoberta.append("_")
+    palavra_descoberta = ['_' for letra in palavra_secreta]
+    # while len(palavra_descoberta) < len(palavra_secreta):
+    #     palavra_descoberta.append("_")
 
     print("************************************************************")
     print("                     JOGO DA FORCA")
