@@ -1,4 +1,5 @@
 import random
+import os
 
 def jogar():
     ''' 
@@ -103,6 +104,7 @@ def imprime_tela(palavra_descoberta, letras_chutadas, qtd_erros, qtd_tentativas)
     '''
     Monta a tela do jogo
     '''
+    os.system('cls' if os.name == 'nt' else 'clear')
     print(" ______________________")
     print("|/                     |")
     if qtd_erros == 0:
