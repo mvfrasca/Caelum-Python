@@ -37,7 +37,7 @@ class Conta:
             return False
         else:
             destino.deposita(valor)
-            self.historico.atualiza_historico(f'Transferência realizada no valor de {valor} para a conta número {destino.numero} - titular: {destino.titular.nome}')
+            self.historico.atualiza_historico(f'Transferência realizada no valor de {valor} para a conta número {destino.numero} - titular: {destino.titular.nome} {destino.titular.sobrenome}')
             return True
 
     def extrato(self):
