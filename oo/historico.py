@@ -1,10 +1,14 @@
 class Historico:
 
     def __init__(self):
-        self.transacoes = []
+        self._transacoes = []
+
+    @property
+    def transacoes(self):
+        return self._transacoes
 
     def atualiza_historico(self,texto_historico):
-        self.transacoes.append(texto_historico)
+        self._transacoes.append(texto_historico)
 
     def imprime(self):
         '''
@@ -12,5 +16,5 @@ class Historico:
         '''
         print('Histórico de Transações')
         print('-----------------------')
-        for t in self.transacoes:
+        for t in self._transacoes:
             print(f' - {t}')
