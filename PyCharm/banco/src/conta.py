@@ -1,4 +1,4 @@
-class Conta:
+class Conta(object):
     
     def __init__(self, numero, titular, saldo, limite):
         self._numero = numero

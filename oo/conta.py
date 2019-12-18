@@ -82,7 +82,7 @@ class Conta:
         Realiza um depósito acrescentando o valor informado ao saldo da conta
         '''
         self._saldo += valor
-        self._historico.atualiza_historico(f'Depósito realizado no valor de {valor}')
+        self._historico.atualiza_historico(f'Depósito realizado no valor de {valor}. Saldo parcial: {self._saldo}')
 
     def saca(self, valor):
         '''
@@ -92,7 +92,7 @@ class Conta:
             return False
         else:
             self._saldo -= valor
-            self._historico.atualiza_historico(f'Saque realizado no valor de {valor}')
+            self._historico.atualiza_historico(f'Saque realizado no valor de {valor}. Saldo parcial: {self._saldo}')
             return True
     
     def transfere_para(self, destino, valor):
@@ -104,7 +104,7 @@ class Conta:
             return False
         else:
             destino.deposita(valor)
-            self._historico.atualiza_historico(f'Transferência realizada no valor de {valor} para a conta número {destino.numero} - titular: {destino.titular.nome} {destino.titular.sobrenome}')
+            self._historico.atualiza_historico(f'Transferência realizada no valor de {valor} para a conta número {destino.numero} - titular: {destino.titular.nome} {destino.titular.sobrenome}. Saldo parcial: {self._saldo}')
             return True
 
     def extrato(self):
@@ -115,35 +115,96 @@ class Conta:
         print(f"Conta número: {self._numero}\nSaldo: {self._saldo}")
         print('\n')
         self._historico.imprime()
+
+
+    def atualiza(self, taxa):
+        '''
+        Atualiza o saldo com a taxa informada
+        '''
+        self._saldo += self._saldo * taxa
+        self._historico.atualiza_historico(f'Atualização de rendimentos - taxa: {taxa}. Saldo parcial: {self._saldo}')
+    
+    def __str__(self):
+        return f"Titular: {self._titular.nome} {self._titular.sobrenome} - CPF: {self._titular.cpf}"
+
+class ContaCorrente(Conta):
+
+    def atualiza(self, taxa):
+        '''
+        Atualiza o saldo com a taxa informada
+        '''
+        self._saldo += self._saldo * taxa * 2
+        self._historico.atualiza_historico(f'Atualização de rendimentos - taxa: {taxa}. Saldo parcial: {self._saldo}')
+
+    def deposita(self, valor):
+        '''
+        Realiza um depósito acrescentando o valor informado ao saldo da conta
+        '''
+        taxa_deposito = 0.1
+        self._saldo += valor
+        self._historico.atualiza_historico(f'Depósito realizado no valor de {valor}')
+        self._saldo -= taxa_deposito
+        self._historico.atualiza_historico(f'Cobrança da taxa de depósito {-taxa_deposito}')
+        
+
+class ContaPoupanca(Conta):
+
+    def atualiza(self, taxa):
+        '''
+        Atualiza o saldo com a taxa informada
+        '''
+        self._saldo += self._saldo * taxa * 3
+        self._historico.atualiza_historico(f'Atualização de rendimentos - taxa: {taxa}. Saldo parcial: {self._saldo}')
+
     
 
-    # Testes
-    if __name__ == "__main__":
+# Testes
+if __name__ == "__main__":
 
-        from cliente import Cliente
-        from conta import Conta
-        from data import Data
+    from cliente import Cliente
+    from conta import Conta
+    from data import Data
 
-        data = Data(16, 12, 2019)
-        bicca = Cliente('Bruno', 'Bicca', '111222333-44')
-        marcelo = Cliente('Marcelo', 'Frasca', '222333444-55')
+    data = Data(16, 12, 2019)
 
-        conta_bicca = Conta('1234-5', bicca, 15000.0, 30000.0, data)
-        conta_marcelo = Conta('1234-5', marcelo, 5000.0, 10000.0, data)
+    # Cadastro Clientes:
+    joao = Cliente('João', 'da Silva', '333444555-66')
+    bicca = Cliente('Bruno', 'Bicca', '111222333-44')
+    marcelo = Cliente('Marcelo', 'Frasca', '222333444-55')
 
-        #print('Métodos da class Conta:')
-        #vars(conta_marcelo)
+    # Abertura das contas:
+    conta_joao = Conta('8901-2', joao, 1400.0, 2000.0, data)
+    conta_bicca = ContaCorrente('1234-5', bicca, 15000.0, 30000.0, data)
+    conta_marcelo = ContaPoupanca('4567-5', marcelo, 5000.0, 10000.0, data)
 
-        # Movimentações nas contas
-        conta_bicca.deposita(50.0)
-        conta_marcelo.saca(50.0)
-        conta_bicca.transfere_para(conta_marcelo, 100.50)
-        conta_marcelo.deposita(0.5)
-        conta_marcelo.saca(101.0)
+    #print('Métodos da class Conta:')
+    #vars(conta_marcelo)
 
-        print(f'\nTotal de Contas: {Conta.total_contas()}')
-        print(f'\nConta do Bicca - Id: {conta_bicca.id}')
-        conta_bicca.extrato()
-        print(f'\nConta do Marcelo - Id: {conta_marcelo.id}')
-        conta_marcelo.extrato()
+    # Movimentações nas contas
+    conta_joao.saca(100.0)
+    conta_bicca.deposita(50.0)
+    conta_marcelo.saca(50.0)
+    conta_bicca.transfere_para(conta_marcelo, 100.50)
+    conta_marcelo.deposita(0.5)
+    conta_marcelo.saca(101.0)
+    conta_joao.transfere_para(conta_bicca, 350.50)
 
+    # Atualização de rendimentos
+    conta_joao.atualiza(0.01)
+    conta_bicca.atualiza(0.01)
+    conta_marcelo.atualiza(0.01)
+
+    # Extrato
+    print(f'\nTotal de Contas: {Conta.total_contas()}')
+    print(f'\nConta do João - Id: {conta_joao.id}')
+    conta_joao.extrato()
+    print(f'\nConta do Bicca - Id: {conta_bicca.id}')
+    conta_bicca.extrato()
+    print(f'\nConta do Marcelo - Id: {conta_marcelo.id}')
+    conta_marcelo.extrato()
+
+    # Impressão dos dados da conta
+    print('')
+    print(conta_joao)
+    print(conta_bicca)
+    print(conta_marcelo)
