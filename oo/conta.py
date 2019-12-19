@@ -2,6 +2,7 @@ import abc
 
 from historico import Historico
 from tributavel import Tributavel
+from excecoes import SaldoInsuficienteError
 
 class Conta(abc.ABC):
     '''
@@ -89,15 +90,20 @@ class Conta(abc.ABC):
         '''
         Realiza um depósito acrescentando o valor informado ao saldo da conta
         '''
-        self._saldo += valor
-        self._historico.atualiza_historico(f'Depósito realizado no valor de {valor}. Saldo parcial: {self._saldo}')
+        if (valor <= 0):
+            raise ValueError("Valor para depósito deve ser positivo")
+        else:
+            self._saldo += valor
+            self._historico.atualiza_historico(f'Depósito realizado no valor de {valor}. Saldo parcial: {self._saldo}')
 
     def saca(self, valor):
         '''
         Realiza um saque deduzindo o valor informado do saldo da conta
         '''
-        if (self._saldo < valor):
-            return False
+        if (valor <= 0):
+            raise ValueError("Valor para saque deve ser positivo")
+        elif ((self._saldo + self._limite) < valor):
+            raise SaldoInsuficienteError("Saldo insuficiente")
         else:
             self._saldo -= valor
             self._historico.atualiza_historico(f'Saque realizado no valor de {valor}. Saldo parcial: {self._saldo}')
@@ -107,13 +113,23 @@ class Conta(abc.ABC):
         '''
         Realiza uma transferência do valor informado para a conta destino
         '''
-        retirou = self.saca(valor)
-        if (retirou == False):
-            return False
-        else:
-            destino.deposita(valor)
-            self._historico.atualiza_historico(f'Transferência realizada no valor de {valor} para a conta número {destino.numero} - titular: {destino.titular.nome} {destino.titular.sobrenome}. Saldo parcial: {self._saldo}')
-            return True
+        if (valor <= 0):
+            raise ValueError("Valor para transferência deve ser positivo")
+
+        try:
+            retirou = self.saca(valor)
+            if (retirou == False):
+                return False
+            else:
+                destino.deposita(valor)
+                self._historico.atualiza_historico(f'Transferência realizada no valor de {valor} para a conta número {destino.numero} - titular: {destino.titular.nome} {destino.titular.sobrenome}. Saldo parcial: {self._saldo}')
+                return True
+        except SaldoInsuficienteError as e:
+            raise SaldoInsuficienteError("Saldo insuficente para transferência")
+        except:
+            raise e
+            
+
 
     def extrato(self):
         '''
@@ -153,11 +169,14 @@ class ContaCorrente(Conta):
         '''
         Realiza um depósito acrescentando o valor informado ao saldo da conta
         '''
-        taxa_deposito = 0.1
-        self._saldo += valor
-        self._historico.atualiza_historico(f'Depósito realizado no valor de {valor}')
-        self._saldo -= taxa_deposito
-        self._historico.atualiza_historico(f'Cobrança da taxa de depósito {-taxa_deposito}')
+        if (valor <= 0):
+            raise ValueError("Valor para depósito deve ser positivo")
+        else:
+            taxa_deposito = 0.1
+            self._saldo += valor
+            self._historico.atualiza_historico(f'Depósito realizado no valor de {valor}')
+            self._saldo -= taxa_deposito
+            self._historico.atualiza_historico(f'Cobrança da taxa de depósito {-taxa_deposito}')
 
     def get_valor_imposto(self):
         '''

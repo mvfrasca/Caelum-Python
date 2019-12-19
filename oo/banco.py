@@ -7,10 +7,11 @@ class Banco:
     def adiciona_conta(self, conta):
         self._contas.append(conta)
     
-    def pega_conta(self, id):
+    def pega_conta(self, numero):
         for c in self._contas:
-            if c.id == id:
+            if c.numero == numero:
                 return c
+        return None
     
     def pega_total_contas(self):
         return len(self._contas)
@@ -19,14 +20,20 @@ class Banco:
 if __name__ == '__main__':
     from data import Data
     from atualizador_contas import AtualizadorDeContas
-    from conta import Conta, ContaCorrente, ContaPoupanca
+    from conta import Conta, ContaCorrente, ContaPoupanca, ContaInvestimento
+    from cliente import Cliente
 
     data = Data(17, 12, 2019)
 
+    # Cadastro Clientes:
+    joao = Cliente('João', 'da Silva', '333444555-66')
+    bicca = Cliente('Bruno', 'Bicca', '111222333-44')
+    marcelo = Cliente('Marcelo', 'Frasca', '222333444-55')
+
     # Abertura das contas
-    c = Conta('123-4', 'João', 1000.0, 5000.0, data)
-    cc = ContaCorrente('123-5', 'José', 1000.0, 5000.0, data)
-    cp = ContaPoupanca('123-6', 'Maria', 1000.0, 5000.0, data)
+    c = ContaInvestimento('123-4', joao, 1000.0, 5000.0, data)
+    cc = ContaCorrente('123-5', bicca, 1000.0, 5000.0, data)
+    cp = ContaPoupanca('123-6', marcelo, 1000.0, 5000.0, data)
 
     lista_ids = []
     lista_ids.append(c.id)
