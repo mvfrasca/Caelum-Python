@@ -19,7 +19,8 @@ class CaixaEletronico:
         '''Realiza depósito
         '''
         try:
-            self._conta_logada.deposita(valor)
+            self._conta.deposita(valor)
+            print("Depósito realizado com sucesso!")
         except ValueError:
             print("O valor informado para depósito deve ser um número positivo.")
         except:
@@ -29,7 +30,8 @@ class CaixaEletronico:
         '''Realiza saca
         '''
         try:
-            self._conta_logada.saca(valor)
+            self._conta.saca(valor)
+            print("Saque realizado com sucesso!")
         except ValueError:
             print("O valor informado para depósito deve ser um número positivo.")
         except SaldoInsuficienteError:
@@ -41,15 +43,18 @@ class CaixaEletronico:
         '''Realiza transferência
         '''
         try:
-            conta_destino = banco.pega_conta(numero_conta)
-            if conta == None:
+            conta_destino = banco.pega_conta(numero_conta_destino)
+            if conta_destino == None:
                 raise ContaInexistente("A conta informada não existe")
             else: 
-                self._conta_logada.transfere_para(conta_destino, valor)
+                self._conta.transfere_para(conta_destino, valor)
+                print("Transferência realizada com sucesso!")
         except ValueError:
             print("O valor informado para transferência deve ser um número positivo.")
         except SaldoInsuficienteError:
             print("Você não possui saldo suficiente para completar essa operação.")
+        except ContaInexistente as e:
+            print("A conta informada não existe.")
         except:
             print("Ocorreu um erro, tente novamente daqui a alguns instantes.")
 
@@ -57,7 +62,7 @@ class CaixaEletronico:
         '''Imprime extrato da conta
         '''
         try:
-            self._conta_logada.extrato()
+            self._conta.extrato()
         except:
             print("Ocorreu um erro, tente novamente daqui a alguns instantes.")
 
@@ -93,22 +98,26 @@ if __name__ == '__main__':
     caixa_eletronico = CaixaEletronico(banco, numero_conta)
 
     print(f"Olá Sr(a). {caixa_eletronico.conta.titular.nome}!")
-    print("\nMenu de opções: ")
-    print("1 - Depósito")
-    print("2 - Saque")
-    print("3 - Transferência")
-    print("4 - Extrato")
-    opcao = input("\nInforme a opção desejada: ")
 
-    if opcao == 1:
-        valor = input("Informe o valor de depósito: ")
-        caixa_eletronico.deposita(valor)
-    elif opcao == 2:
-        valor = input("Informe o valor para saque: ")
-        caixa_eletronico.saca(valor)
-    elif opcao == 3:
-        numero_conta_destino = input("Informe o número da conta destino: ")
-        valor = input("Informe o valor para transferêncoa: ")
-        caixa_eletronico.transfere_para(numero_conta_destino, valor)
-    elif opcao == 4:
-        caixa_eletronico.extrato()
+    opcao = 0
+    while (opcao != 9):
+        print("\nMenu de opções: ")
+        print("1 - Depósito")
+        print("2 - Saque")
+        print("3 - Transferência")
+        print("4 - Extrato")
+        print("9 - Sair")
+        opcao = int(input("\nInforme a opção desejada: "))
+
+        if opcao == 1:
+            valor = float(input("Informe o valor de depósito: "))
+            caixa_eletronico.deposita(valor)
+        elif opcao == 2:
+            valor = float(input("Informe o valor para saque: "))
+            caixa_eletronico.saca(valor)
+        elif opcao == 3:
+            numero_conta_destino = input("Informe o número da conta destino: ")
+            valor = float(input("Informe o valor para transferência: "))
+            caixa_eletronico.transfere_para(numero_conta_destino, valor)
+        elif opcao == 4:
+            caixa_eletronico.extrato()
