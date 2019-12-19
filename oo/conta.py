@@ -1,6 +1,9 @@
-from historico import Historico
+import abc
 
-class Conta:
+from historico import Historico
+from tributavel import Tributavel
+
+class Conta(abc.ABC):
     '''
     Representação de uma Conta bancária.
 
@@ -14,7 +17,7 @@ class Conta:
 
     # definir os Slots impede que se crie novos atributos na classe dinamicamente em tempo 
     # de execução (ele apaga o __dict__) 
-    __slots__ = ['_id', '_numero', '_titular', '_saldo', '_limite', '_data_abertura', '_historico']
+    __slots__ = ['_id', '_numero', '_titular', '_saldo', '_limite', '_data_abertura', '_historico', '_tipo']
     _total_contas = 0
 
     def __init__(self, numero, titular, saldo, limite, data_abertura):
@@ -26,6 +29,7 @@ class Conta:
         self._limite = limite
         self._data_abertura  = data_abertura
         self._historico = Historico()
+        self._tipo = ""
 
     @property
     def id(self):
@@ -70,6 +74,10 @@ class Conta:
     @property
     def historico(self):
         return self._historico
+    
+    @property
+    def tipo(self):
+        return self._tipo  
 
     
     @classmethod
@@ -116,18 +124,23 @@ class Conta:
         print('\n')
         self._historico.imprime()
 
-
+    @abc.abstractmethod
     def atualiza(self, taxa):
         '''
         Atualiza o saldo com a taxa informada
         '''
-        self._saldo += self._saldo * taxa
-        self._historico.atualiza_historico(f'Atualização de rendimentos - taxa: {taxa}. Saldo parcial: {self._saldo}')
-    
+        #self._saldo += self._saldo * taxa
+        #self._historico.atualiza_historico(f'Atualização de rendimentos - taxa: {taxa}. Saldo parcial: {self._saldo}')
+        pass
+
     def __str__(self):
-        return f"Titular: {self._titular.nome} {self._titular.sobrenome} - CPF: {self._titular.cpf}"
+        return f"Tipo: {self._tipo} - Titular: {self._titular.nome} {self._titular.sobrenome} - CPF: {self._titular.cpf}"
 
 class ContaCorrente(Conta):
+
+    def __init__(self, numero, titular, saldo, limite, data_abertura):
+        super().__init__(numero, titular, saldo, limite, data_abertura)
+        self._tipo = "Conta Corrente"
 
     def atualiza(self, taxa):
         '''
@@ -145,9 +158,32 @@ class ContaCorrente(Conta):
         self._historico.atualiza_historico(f'Depósito realizado no valor de {valor}')
         self._saldo -= taxa_deposito
         self._historico.atualiza_historico(f'Cobrança da taxa de depósito {-taxa_deposito}')
+
+    def get_valor_imposto(self):
+        '''
+        Aplica a taxa de imposto sobre o valor do saldo da conta
+        '''
+        return self._saldo * 0.01
         
 
 class ContaPoupanca(Conta):
+
+    def __init__(self, numero, titular, saldo, limite, data_abertura):
+        super().__init__(numero, titular, saldo, limite, data_abertura)
+        self._tipo = "Conta Poupança"
+
+    def atualiza(self, taxa):
+        '''
+        Atualiza o saldo com a taxa informada
+        '''
+        self._saldo += self._saldo * taxa * 5
+        self._historico.atualiza_historico(f'Atualização de rendimentos - taxa: {taxa}. Saldo parcial: {self._saldo}')
+
+class ContaInvestimento(Conta):
+
+    def __init__(self, numero, titular, saldo, limite, data_abertura):
+        super().__init__(numero, titular, saldo, limite, data_abertura)
+        self._tipo = "Conta Investimento"
 
     def atualiza(self, taxa):
         '''
@@ -156,7 +192,29 @@ class ContaPoupanca(Conta):
         self._saldo += self._saldo * taxa * 3
         self._historico.atualiza_historico(f'Atualização de rendimentos - taxa: {taxa}. Saldo parcial: {self._saldo}')
 
-    
+    def get_valor_imposto(self):
+        '''
+        Aplica a taxa de imposto sobre o valor do saldo da conta
+        '''
+        return self._saldo * 0.03
+
+class SeguroDeVida:
+
+    def __init__(self, valor, titular, numero_apolice):
+        self._valor = valor
+        self._titular = titular
+        self._numero_apolice = numero_apolice
+        self._tipo = "Seguro de Vida"
+
+    def get_valor_imposto(self):
+        '''
+        Aplica a taxa de imposto sobre o valor do prêmio do seguro
+        '''
+        return 50 + self._valor * 0.05
+
+    def __str__(self):
+        return f"Tipo: {self._tipo} - Titular: {self._titular.nome} {self._titular.sobrenome} - CPF: {self._titular.cpf}"
+
 
 # Testes
 if __name__ == "__main__":
@@ -173,7 +231,8 @@ if __name__ == "__main__":
     marcelo = Cliente('Marcelo', 'Frasca', '222333444-55')
 
     # Abertura das contas:
-    conta_joao = Conta('8901-2', joao, 1400.0, 2000.0, data)
+    #conta_joao = Conta('8901-2', joao, 1400.0, 2000.0, data)
+    conta_joao = ContaInvestimento('8901-2', joao, 1400.0, 2000.0, data)
     conta_bicca = ContaCorrente('1234-5', bicca, 15000.0, 30000.0, data)
     conta_marcelo = ContaPoupanca('4567-5', marcelo, 5000.0, 10000.0, data)
 
