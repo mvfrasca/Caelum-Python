@@ -30,7 +30,7 @@ if __name__ == '__main__':
     conta_marcelo = ContaPoupanca('4567-5', marcelo, 5000.0, 10000.0, data)
     seguro_marcelo = SeguroDeVida(50000.0, marcelo, '123456')
     
-    # Registrando a interface Tributavel nos objetos que se pretende atribuir o mesmo comportamento
+    # Registrando a interface Tributavel nas classes que se pretende atribuir o mesmo comportamento
     Tributavel.register(ContaCorrente)
     Tributavel.register(ContaInvestimento)
     Tributavel.register(SeguroDeVida)
